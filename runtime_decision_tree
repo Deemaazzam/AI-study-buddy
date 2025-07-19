@@ -1,0 +1,24 @@
+// Runtime Execution Decision Tree
+digraph {
+	Start [label="Process Graph Task"]
+	SizeCheck [label="Is subgraph size > threshold?"]
+	Parallel [label="Execute in Parallel"]
+	Seq [label="Execute Sequentially"]
+	ThreadsAvail [label="Are threads available?"]
+	WaitOrSeq [label="Wait or Run Sequentially"]
+	AssignThread [label="Assign task to thread"]
+	WorkSteal [label="Work Stealing?"]
+	Continue [label="Continue executing task"]
+	SimpleLoop [label="Simple loop over nodes"]
+	Start -> SizeCheck
+	SizeCheck -> Parallel [label="Yes (0.65)"]
+	SizeCheck -> Seq [label="No (0.35)"]
+	Parallel -> ThreadsAvail
+	ThreadsAvail -> AssignThread [label="Yes (0.7)"]
+	ThreadsAvail -> WaitOrSeq [label="No (0.3)"]
+	AssignThread -> WorkSteal
+	WorkSteal -> Continue [label="No (0.6)"]
+	WorkSteal -> AssignThread [label="Yes (0.4)"]
+	Seq -> SimpleLoop
+	WaitOrSeq -> SimpleLoop
+}
